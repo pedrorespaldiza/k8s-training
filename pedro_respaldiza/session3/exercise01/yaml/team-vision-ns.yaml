@@ -1,0 +1,8 @@
+# Exercise 1 of session 3: 
+# Pedro Ignacio Respaldiza Hidalgo (aka Iñaki Respaldiza)
+# K8s Training user: pedro_respaldiza
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-vision

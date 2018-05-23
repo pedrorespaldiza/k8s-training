@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-wp-allow
+  namespace: exercise-02
+spec:
+  podSelector:
+    matchLabels:
+      app: mariadb
+      type: database
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: wordpress
+          type: frontend
+    ports:
+    - protocol: TCP
+      port: 3306

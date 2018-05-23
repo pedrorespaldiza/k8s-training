@@ -1,0 +1,47 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: team-vision
+  name: dev-role
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["deployments", "replicasets", "pods", "configmaps"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-binding
+  namespace: team-vision
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dev-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: dev
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: team-api
+  name: dev-role
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["deployments", "replicasets", "pods", "configmaps"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-binding
+  namespace: team-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dev-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: dev

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-vision-limits
+  namespace: team-vision
+spec:
+  hard:
+    limits.cpu: "1600m"
+    limits.memory: "3240Mi"

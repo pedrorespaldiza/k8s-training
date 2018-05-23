@@ -1,0 +1,22 @@
+# Exercise 1 of session 1: Mariadb deployment
+# Pedro Ignacio Respaldiza Hidalgo (aka Iñaki Respaldiza)
+# K8s Training user: pedro_respaldiza
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wordpress-ingress
+  namespace: exercise-02
+  labels:
+    app: wordpress
+    type: frontend
+  annotations:
+spec:
+  rules:
+  - host: wordpress-exercise-02.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: wordpress-service
+          servicePort: http-sv-port

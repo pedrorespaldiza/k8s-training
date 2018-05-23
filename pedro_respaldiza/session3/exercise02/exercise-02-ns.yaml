@@ -1,0 +1,8 @@
+# Exercise 1 of session 1: Mariadb deployment
+# Pedro Ignacio Respaldiza Hidalgo (aka Iñaki Respaldiza)
+# K8s Training user: pedro_respaldiza
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: exercise-02

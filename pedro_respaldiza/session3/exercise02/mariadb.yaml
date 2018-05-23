@@ -1,0 +1,64 @@
+# Exercise 1 of session 1: Mariadb deployment
+# Pedro Ignacio Respaldiza Hidalgo (aka Iñaki Respaldiza)
+# K8s Training user: pedro_respaldiza
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  namespace: exercise-02
+  labels:
+    app: wordpress
+    type: database
+spec:
+  selector:
+    app: wordpress
+    type: database
+  ports:
+  - port: 3306
+    targetPort: db-port
+  type: ClusterIP
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+  namespace: exercise-02
+  labels:
+    app: wordpress
+    type: database
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        type: database
+    spec:
+      containers:
+        - name: mariadb
+          image: bitnami/mariadb:latest
+          ports:
+            - containerPort: 3306
+              name: db-port
+          env:
+            - name: MARIADB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbuser
+            - name: MARIADB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbname
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbpassword
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbrootpassword

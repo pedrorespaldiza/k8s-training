@@ -1,0 +1,84 @@
+# Exercise 1 of session 1: Mariadb deployment
+# Pedro Ignacio Respaldiza Hidalgo (aka Iñaki Respaldiza)
+# K8s Training user: pedro_respaldiza
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: exercise-02
+  labels:
+    app: wordpress
+    type: frontend
+spec:
+  selector:
+    app: wordpress
+    type: frontend
+  ports:
+  - name: http-sv-port 
+    port: 80
+    targetPort: http-port
+  - name: https-sv-port
+    port: 443
+    targetPort: https-port
+  type: ClusterIP
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  namespace: exercise-02
+  labels:
+    app: wordpress
+    type: frontend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        type: frontend
+    spec:
+      containers:
+        - name: wordpress
+          image: bitnami/wordpress:latest
+          ports:
+            - containerPort: 80
+              name: http-port
+            - containerPort: 443
+              name: https-port
+          env:
+            - name: MARIADB_HOST
+              value: mariadb-service
+            - name: MARIADB_PORT_NUMBER
+              value: "3306"
+            - name: WORDPRESS_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbuser
+            - name: WORDPRESS_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbpassword
+            - name: WORDPRESS_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbname
+            - name: WORDPRESS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secret
+                  key: wppassword
+            - name: WORDPRESS_BLOG_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: wordpress-cm
+                  key: wpname
+            - name: WORDPRESS_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: wordpress-cm
+                  key: wpuser
