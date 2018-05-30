@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  namespace: exercise
+  labels:
+    app: wordpress
+    type: database
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9104"
+spec:
+  selector:
+    app: wordpress
+    type: database
+  ports:
+  - name: metrics
+    port: 9104
+    targetPort: metrics
+  - name: db-port
+    port: 3306
+    targetPort: db-port
+  type: ClusterIP
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+  namespace: exercise
+  labels:
+    app: wordpress
+    type: database
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        type: database
+    spec:
+      containers:
+        - name: metrics
+          image: "prom/mysqld-exporter:v0.10.0"
+          env:
+          - name: DATA_SOURCE_NAME
+            value: "root:Xsdasdfgq2O@(localhost:3306)/"
+          ports:
+          - name: metrics
+            containerPort: 9104
+        - name: mariadb
+          image: bitnami/mariadb:latest
+          ports:
+            - containerPort: 3306
+              name: db-port
+          env:
+            - name: MARIADB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbuser
+            - name: MARIADB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbname
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbpassword
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbrootpassword

@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wordpress-ingress
+  namespace: exercise
+  labels:
+    app: wordpress
+    type: frontend
+  annotations:
+spec:
+  rules:
+  - host: wordpress-exercise.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: wordpress-service
+          servicePort: http-sv-port

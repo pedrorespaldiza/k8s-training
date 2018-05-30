@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ab-ingress
+  labels:
+    app: kube-test-container
+  annotations:
+spec:
+  rules:
+  - host: ab-exercise.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kube-test-container
+          servicePort: 80
